@@ -10,7 +10,7 @@ class Joueur(pygame.sprite.Sprite):
        self.rect = self.image.get_rect()
        self.rect.x = LARGEUR/2
        self.rect.y = HAUTEUR/2
-       self.vitesse = 13
+       self.vitesse = 12
 
 LARGEUR = 600
 HAUTEUR = 600
