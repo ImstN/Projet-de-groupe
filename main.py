@@ -1,6 +1,9 @@
 import pygame
 from pygame.locals import *
 
+LARGEUR = 600
+HAUTEUR = 600
+
 pygame.init()
 
 class Joueur(pygame.sprite.Sprite):
@@ -12,8 +15,13 @@ class Joueur(pygame.sprite.Sprite):
        self.rect.y = HAUTEUR/2
        self.vitesse = 13
 
-LARGEUR = 600
-HAUTEUR = 600
+       self.saut = False
+       self.hauteur_saut = 30
+       self.vitesse_de_saut = self.hauteur_saut
+       self.pesanteur = 5
+
+
+
 fenetre = pygame.display.set_mode((LARGEUR, HAUTEUR))
 clock = pygame.time.Clock()
 joueur = Joueur()
@@ -41,6 +49,15 @@ while running:
             if event.key == K_s:
                 if joueur.rect.y < 570:
                     joueur.rect.y += joueur.vitesse
+            if event.key == K_SPACE:
+                joueur.saut = True
+   if joueur.saut:
+       joueur.rect.y -= joueur.vitesse_de_saut
+       joueur.vitesse_de_saut -= joueur.pesanteur
+
+       if joueur.vitesse_de_saut < - joueur.hauteur_saut:
+           joueur.saut = False
+           joueur.vitesse_de_saut = joueur.hauteur_saut
 
    fenetre.fill((255, 255, 255))
    liste_des_sprites.draw(fenetre)
