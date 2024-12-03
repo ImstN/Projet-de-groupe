@@ -7,6 +7,7 @@
     <list default="true" id="e1d13d58-23d1-4916-8a18-d2694c827629" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/jeu.python.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jeu.python.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
@@ -31,7 +32,9 @@
   "keyToString": {
     "Python.main.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "noam",
+
+    "git-widget-placeholder": "ajoute__gravité",
+
     "last_opened_file_path": "/Users/maximiliangutknecht/Library/CloudStorage/OneDrive-EDUETATFR/24 25/OC Informatique/Git/TP/Projet-de-groupe"
   }
 }]]></component>
@@ -82,5 +85,16 @@
       <updated>1732025147553</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
