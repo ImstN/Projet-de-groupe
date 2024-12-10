@@ -6,6 +6,10 @@ HAUTEUR = 600
 
 pygame.init()
 
+liste_des_elements = []
+
+pesanteur: int = 3
+
 class Joueur(pygame.sprite.Sprite):
     def __init__(self):
        super().__init__() #Appel obligatoire
@@ -13,10 +17,10 @@ class Joueur(pygame.sprite.Sprite):
        self.image = pygame.transform.scale_by(self.image, 2)
        self.rect = self.image.get_rect()
        self.rect.x = LARGEUR/2
-       self.rect.y = HAUTEUR/2
+       self.rect.y = HAUTEUR/2-200
        self.vitesse = 13
        self.saut = False
-       self.hauteur_saut = 30
+       self.hauteur_saut = 8
        self.vitesse_de_saut = self.hauteur_saut
        self.pesanteur = 5
 
@@ -28,6 +32,8 @@ class Plateforme(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = LARGEUR/2
         self.rect.y = HAUTEUR/2
+        self.taille = self.image.get_height()
+        liste_des_elements.append(self)
 
 class Herbe(Plateforme):
     def __init__(self):
@@ -72,12 +78,27 @@ while running:
             if event.key == K_SPACE:
                 joueur.saut = True
    if joueur.saut:
-       joueur.rect.y -= joueur.vitesse_de_saut
-       joueur.vitesse_de_saut -= joueur.pesanteur
+       for i in range(joueur.hauteur_saut):
+           joueur.rect.y -= 2*pesanteur
+       #joueur.vitesse_de_saut -= pesanteur
+       #if joueur.vitesse_de_saut < - joueur.hauteur_saut:
+       joueur.saut = False
 
-       if joueur.vitesse_de_saut < - joueur.hauteur_saut:
+   joueur.rect.y += pesanteur
+
+   for bloc in liste_des_elements:
+       collision = pygame.Rect.colliderect(joueur.rect, bloc)
+
+       if collision:
+           if joueur.saut:
+               joueur.rect.y -= joueur.vitesse_de_saut
+               # joueur.vitesse_de_saut -= pesanteur
+
+           joueur.rect.y = bloc.rect.y-1.3*bloc.taille
+           #if joueur.vitesse_de_saut < - joueur.hauteur_saut:
            joueur.saut = False
            joueur.vitesse_de_saut = joueur.hauteur_saut
+
 
    fenetre.fill((255, 255, 255))
    liste_des_sprites.draw(fenetre)
