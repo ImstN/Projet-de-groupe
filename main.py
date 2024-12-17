@@ -50,14 +50,28 @@ class Herbe(Plateforme):
         image = "assets/herbe.png"
         super().__init__(image)
 
+class Background(pygame.sprite.Sprite):
+    def __init__(self, location):
+        image = "assets/ap.png"
+        super().__init__()
+        self.image = pygame.image.load(image).convert_alpha()
+        self.image = pygame.transform.scale_by(self.image, 0.043)
+        self.rect = self.image.get_rect()
+        (self.rect.x, self.rect.y) = location
+
 
 fenetre = pygame.display.set_mode((LARGEUR, HAUTEUR))
 clock = pygame.time.Clock()
-joueur = Joueur()
+
 liste_des_sprites = pygame.sprite.LayeredUpdates()
+for i in range(7):
+    background = Background([86*i, 0])
+    liste_des_sprites.add(background)
+joueur = Joueur()
 liste_des_sprites.add(joueur)
 herbe = Herbe()
 liste_des_sprites.add(herbe)
+
 
 running = True
 pygame.key.set_repeat(40, 30)
