@@ -34,6 +34,32 @@ class Joueur(pygame.sprite.Sprite):
         else:
             self.rect.y += pesanteur_bas
 
+    def bouger_droite(self):
+        rectangle = joueur.rect.copy()
+        rectangle.x += joueur.vitesse
+        rectangle.y -= 10
+        collision = False
+        for element in liste_des_elements:
+            if rectangle.colliderect(element):
+                collision = True
+                break
+
+        if joueur.rect.x < 570 and not collision:
+            joueur.rect.x += joueur.vitesse
+
+    def bouger_gauche(self):
+        rectangle = joueur.rect.copy()
+        rectangle.x -= joueur.vitesse
+        rectangle.y -= 10
+        collision = False
+        for element in liste_des_elements:
+            if rectangle.colliderect(element):
+                collision = True
+                break
+        if joueur.rect.x > -10 and not collision:
+            joueur.rect.x -= joueur.vitesse
+
+
 class Plateforme(pygame.sprite.Sprite):
     def __init__(self, image):
         super().__init__()
@@ -83,11 +109,11 @@ class Grille():
                 pos_y += 32
 
 grille1 = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-           [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-           [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-           [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
+           [0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+           [0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+           [1,1,1,1,0,0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+           [2,2,2,2,0,0,0,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
+           [2,2,2,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
 
@@ -125,11 +151,9 @@ while running:
                 joueur.vitesse_de_saut = joueur.hauteur_saut * 2
 
    if gauche_appuyé:
-       if joueur.rect.x > -10:
-           joueur.rect.x -= joueur.vitesse
+        joueur.bouger_gauche()
    if droite_appuyé:
-       if joueur.rect.x < 570:
-           joueur.rect.x += joueur.vitesse
+       joueur.bouger_droite()
 
 
    joueur.actualiser()
@@ -141,6 +165,7 @@ while running:
                joueur.saut = False
                joueur.est_dans_lair = False
                joueur.vitesse_de_saut = 0
+
 
    fenetre.fill((255, 255, 255))
    liste_des_sprites.draw(fenetre)
