@@ -8,7 +8,8 @@ pygame.init()
 
 liste_des_elements = []
 
-pesanteur: int = 3
+pesanteur_haut: int = 2
+pesanteur_bas: int = 6
 
 class Joueur(pygame.sprite.Sprite):
     def __init__(self):
@@ -20,9 +21,18 @@ class Joueur(pygame.sprite.Sprite):
        self.rect.y = HAUTEUR/2-200
        self.vitesse = 13
        self.saut = False
+       self.est_dans_lair = False
        self.hauteur_saut = 8
-       self.vitesse_de_saut = self.hauteur_saut
-       self.pesanteur = 5
+       self.vitesse_de_saut = 0
+
+    def actualiser(self):
+        if self.saut:
+            self.rect.y -= self.vitesse_de_saut
+            self.vitesse_de_saut -= pesanteur_haut
+            if self.vitesse_de_saut < 0:
+                self.saut = False
+        else:
+            self.rect.y += pesanteur_bas
 
 class Plateforme(pygame.sprite.Sprite):
     def __init__(self, image):
@@ -41,11 +51,6 @@ class Herbe(Plateforme):
         super().__init__(image)
 
 
-
-
-LARGEUR = 600
-HAUTEUR = 600
-
 fenetre = pygame.display.set_mode((LARGEUR, HAUTEUR))
 clock = pygame.time.Clock()
 joueur = Joueur()
@@ -53,6 +58,7 @@ liste_des_sprites = pygame.sprite.LayeredUpdates()
 liste_des_sprites.add(joueur)
 herbe = Herbe()
 liste_des_sprites.add(herbe)
+
 running = True
 pygame.key.set_repeat(40, 30)
 
@@ -62,42 +68,28 @@ while running:
         if event.type == pygame.QUIT:
            running = False
         if event.type == KEYDOWN:
-
             if event.key == K_a:
                 if joueur.rect.x > -10:
                     joueur.rect.x -= joueur.vitesse
             if event.key == K_d:
                 if joueur.rect.x < 570:
                     joueur.rect.x += joueur.vitesse
-            if event.key == K_w:
-                if joueur.rect.y > -10:
-                    joueur.rect.y -= joueur.vitesse
-            if event.key == K_s:
-                if joueur.rect.y < 570:
-                    joueur.rect.y += joueur.vitesse
-            if event.key == K_SPACE:
+            if event.key == K_SPACE and not joueur.saut:
                 joueur.saut = True
-   if joueur.saut:
-       for i in range(joueur.hauteur_saut):
-           joueur.rect.y -= 2*pesanteur
-       #joueur.vitesse_de_saut -= pesanteur
-       #if joueur.vitesse_de_saut < - joueur.hauteur_saut:
-       joueur.saut = False
+                joueur.est_dans_lair = True
+                joueur.vitesse_de_saut = joueur.hauteur_saut * 2
 
-   joueur.rect.y += pesanteur
+
+
+   joueur.actualiser()
 
    for bloc in liste_des_elements:
-       collision = pygame.Rect.colliderect(joueur.rect, bloc)
-
-       if collision:
-           if joueur.saut:
-               joueur.rect.y -= joueur.vitesse_de_saut
-               # joueur.vitesse_de_saut -= pesanteur
-
-           joueur.rect.y = bloc.rect.y-1.3*bloc.taille
-           #if joueur.vitesse_de_saut < - joueur.hauteur_saut:
-           joueur.saut = False
-           joueur.vitesse_de_saut = joueur.hauteur_saut
+       if joueur.rect.colliderect(bloc.rect):
+           if joueur.vitesse_de_saut <= 0 and joueur.rect.bottom <= bloc.rect.top + 10:
+               joueur.rect.bottom = bloc.rect.top
+               joueur.saut = False
+               joueur.est_dans_lair = False
+               joueur.vitesse_de_saut = 0
 
 
    fenetre.fill((255, 255, 255))
