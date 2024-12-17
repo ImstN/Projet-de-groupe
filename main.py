@@ -74,12 +74,10 @@ while running:
             if event.key == K_d:
                 if joueur.rect.x < 570:
                     joueur.rect.x += joueur.vitesse
-            if event.key == K_SPACE and not joueur.saut:
+            if event.key == K_SPACE and not joueur.saut and not joueur.est_dans_lair:
                 joueur.saut = True
                 joueur.est_dans_lair = True
                 joueur.vitesse_de_saut = joueur.hauteur_saut * 2
-
-
 
    joueur.actualiser()
 
