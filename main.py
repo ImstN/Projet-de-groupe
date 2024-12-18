@@ -35,8 +35,8 @@ class Joueur(pygame.sprite.Sprite):
             self.rect.y += pesanteur_bas
 
     def bouger_droite(self):
-        rectangle = joueur.rect.copy()
-        rectangle.x += joueur.vitesse
+        rectangle = self.rect.copy()
+        rectangle.x += self.vitesse
         rectangle.y -= 10
         collision = False
         for element in liste_des_elements:
@@ -44,20 +44,20 @@ class Joueur(pygame.sprite.Sprite):
                 collision = True
                 break
 
-        if joueur.rect.x < 570 and not collision:
-            joueur.rect.x += joueur.vitesse
+        if self.rect.x < 570 and not collision:
+            self.rect.x += self.vitesse
 
     def bouger_gauche(self):
-        rectangle = joueur.rect.copy()
-        rectangle.x -= joueur.vitesse
+        rectangle = self.rect.copy()
+        rectangle.x -= self.vitesse
         rectangle.y -= 10
         collision = False
         for element in liste_des_elements:
             if rectangle.colliderect(element):
                 collision = True
                 break
-        if joueur.rect.x > -10 and not collision:
-            joueur.rect.x -= joueur.vitesse
+        if self.rect.x > -10 and not collision:
+            self.rect.x -= self.vitesse
 
 
 class Plateforme(pygame.sprite.Sprite):
@@ -108,7 +108,17 @@ class Grille():
                     pos_x += 32
                 pos_y += 32
 
-grille1 = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+def afficher_ecran_game_over(fenetre):
+    fenetre.fill((0, 0, 255))  # Fond bleu
+    police = pygame.font.SysFont("Arial", 50)
+    texte = police.render("GAME OVER", True, (255, 255, 255))  # Texte blanc
+    rect_texte = texte.get_rect(center=(LARGEUR / 2, HAUTEUR / 2))
+    fenetre.blit(texte, rect_texte)
+    pygame.display.flip()
+    pygame.time.wait(2000)  # Attendre 3 secondes
+
+
+grille1 = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
            [0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
            [0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
            [1,1,1,1,0,0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -158,6 +168,10 @@ while running:
 
    joueur.actualiser()
 
+   if joueur.rect.x < 0 or joueur.rect.x > LARGEUR or joueur.rect.y > HAUTEUR:
+       afficher_ecran_game_over(fenetre)
+       running = False
+
    for bloc in liste_des_elements:
        if joueur.rect.colliderect(bloc.rect):
            if joueur.vitesse_de_saut <= 0 and joueur.rect.bottom <= bloc.rect.top + 10:
@@ -171,4 +185,5 @@ while running:
    liste_des_sprites.draw(fenetre)
    pygame.display.flip()
    clock.tick(60)  # Limite la boucle à 60 images par seconde
+
 pygame.quit()
