@@ -9,7 +9,7 @@ pygame.init()
 liste_des_elements = []
 
 pesanteur_haut: int = 2
-pesanteur_bas: int = 7
+pesanteur_bas: int = 8
 
 class Joueur(pygame.sprite.Sprite):
     def __init__(self):
@@ -17,9 +17,9 @@ class Joueur(pygame.sprite.Sprite):
        self.image = pygame.image.load("assets/knight.png").convert_alpha()
        self.image = pygame.transform.scale_by(self.image, 2)
        self.rect = self.image.get_rect()
-       self.rect.x = LARGEUR/2
+       self.rect.x = 25
        self.rect.y = 100 #HAUTEUR/2
-       self.vitesse = 7
+       self.vitesse = 5
        self.saut = False
        self.est_dans_lair = False
        self.hauteur_saut = 10
@@ -115,17 +115,17 @@ def afficher_ecran_game_over(fenetre):
     rect_texte = texte.get_rect(center=(LARGEUR / 2, HAUTEUR / 2))
     fenetre.blit(texte, rect_texte)
     pygame.display.flip()
-    pygame.time.wait(2000)  # Attendre 3 secondes
+    pygame.time.wait(2000)  # Attendre 2 secondes
 
 
-grille1 = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-           [0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-           [0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-           [1,1,1,1,0,0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-           [2,2,2,2,0,0,0,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-           [2,2,2,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
+grille1 = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0],
+           [0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0],
+           [0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0],
+           [1,1,1,1,0,0,1,1,0,1,1,1,0,0,0,0,0,0],
+           [2,2,2,2,0,0,0,2,0,2,2,2,1,0,0,0,0,0],
+           [2,2,2,0,0,0,0,0,0,2,2,2,2,2,2,2,0,1],
+           [0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,0,2],
+           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
 
 class Background(pygame.sprite.Sprite):
     def __init__(self, location):
@@ -183,7 +183,7 @@ while running:
 
    joueur.actualiser()
 
-   if joueur.rect.x < 0 or joueur.rect.x > LARGEUR or joueur.rect.y > HAUTEUR:
+   if joueur.rect.y > HAUTEUR:
        afficher_ecran_game_over(fenetre)
        running = False
 
