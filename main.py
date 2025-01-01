@@ -11,6 +11,7 @@ liste_des_elements = []
 pesanteur_haut: int = 2
 pesanteur_bas: int = 8
 
+# la classe du joueur, son constructeur et ses mouvements
 class Joueur(pygame.sprite.Sprite):
     def __init__(self):
        super().__init__() #Appel obligatoire
@@ -25,6 +26,7 @@ class Joueur(pygame.sprite.Sprite):
        self.hauteur_saut = 10
        self.vitesse_de_saut = 0
 
+    # fonction pour voir si le joueur saut
     def actualiser(self):
         if self.saut:
             self.rect.y -= self.vitesse_de_saut
@@ -59,7 +61,7 @@ class Joueur(pygame.sprite.Sprite):
         if self.rect.x > -10 and not collision:
             self.rect.x -= self.vitesse
 
-
+# Classe de base pour toutes les plateformes
 class Plateforme(pygame.sprite.Sprite):
     def __init__(self, image):
         super().__init__()
@@ -71,6 +73,7 @@ class Plateforme(pygame.sprite.Sprite):
         self.taille = self.image.get_height()
         liste_des_elements.append(self)
 
+# la platforme de l'herbe
 class Herbe(Plateforme):
     def __init__(self, x, y):
         image = "assets/blocs/herbe.png"
@@ -78,6 +81,7 @@ class Herbe(Plateforme):
         self.rect.x = x
         self.rect.y = y
 
+# la platforme de la terre
 class Terre(Plateforme):
     def __init__(self, x, y):
         image = "assets/blocs/terre.png"
@@ -85,6 +89,7 @@ class Terre(Plateforme):
         self.rect.x = x
         self.rect.y = y
 
+# la platforme du symbole d'interrogation
 class Interrogation(Plateforme):
     def __init__(self, x, y):
         image = "assets/blocs/interrogation.png"
@@ -92,21 +97,21 @@ class Interrogation(Plateforme):
         self.rect.x = x
         self.rect.y = y
 
-
+# classe du grille et son constructeur
 class Grille():
-        def creer(self, listeDeGrille):
-            pos_y = 10*32
-            for ligne in listeDeGrille:
-                pos_x = 0
-                for element in ligne:
-                    if element == 1:
-                        liste_des_sprites.add(Herbe(pos_x, pos_y))
-                    if element == 2:
-                        liste_des_sprites.add(Terre(pos_x, pos_y))
-                    if element == 3:
-                        liste_des_sprites.add(Interrogation(pos_x, pos_y))
-                    pos_x += 32
-                pos_y += 32
+    def creer(self, listeDeGrille):
+        pos_y = 10*32
+        for ligne in listeDeGrille:
+            pos_x = 0
+            for element in ligne:
+                if element == 1:
+                    liste_des_sprites.add(Herbe(pos_x, pos_y))
+                if element == 2:
+                    liste_des_sprites.add(Terre(pos_x, pos_y))
+                if element == 3:
+                    liste_des_sprites.add(Interrogation(pos_x, pos_y))
+                pos_x += 32
+            pos_y += 32
 
 def afficher_ecran_game_over(fenetre):
     fenetre.fill((0, 0, 255))  # Fond bleu
@@ -117,7 +122,7 @@ def afficher_ecran_game_over(fenetre):
     pygame.display.flip()
     pygame.time.wait(2000)  # Attendre 2 secondes
 
-
+# le grille
 grille1 = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0],
            [0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0],
            [0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0],
@@ -127,6 +132,7 @@ grille1 = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0],
            [0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,0,2],
            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
 
+# classe de l'arrière plan
 class Background(pygame.sprite.Sprite):
     def __init__(self, location):
         image = "assets/ap.png"
@@ -140,10 +146,13 @@ class Background(pygame.sprite.Sprite):
 fenetre = pygame.display.set_mode((LARGEUR, HAUTEUR))
 clock = pygame.time.Clock()
 
+# liste des sprites et l'ajoute de toutes les plateformes
 liste_des_sprites = pygame.sprite.LayeredUpdates()
 for i in range(7):
     background = Background([86*i, 0])
     liste_des_sprites.add(background)
+
+# initialisation du joueur
 joueur = Joueur()
 liste_des_sprites.add(joueur)
 
@@ -157,6 +166,7 @@ GrilleDeJeu = Grille()
 GrilleDeJeu.creer(grille1)
 
 while running:
+    # mouvement à gauche et droite et le saut
    for event in pygame.event.get():
         if event.type == pygame.QUIT:
            running = False
@@ -183,10 +193,12 @@ while running:
 
    joueur.actualiser()
 
+   # affichache de l'écran "game-over"
    if joueur.rect.y > HAUTEUR:
        afficher_ecran_game_over(fenetre)
        running = False
 
+   # gestion des collisions
    for bloc in liste_des_elements:
        if joueur.rect.colliderect(bloc.rect):
            if joueur.vitesse_de_saut <= 0 and joueur.rect.bottom <= bloc.rect.top + 10:
