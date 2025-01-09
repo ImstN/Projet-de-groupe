@@ -11,6 +11,22 @@ liste_des_elements = []
 pesanteur_haut: int = 2
 pesanteur_bas: int = 8
 
+fenetre = pygame.display.set_mode((LARGEUR, HAUTEUR))
+clock = pygame.time.Clock()
+
+# initialiser le score
+score = 0
+checkpoint = 50
+
+police = pygame.font.SysFont("Arial", 50)
+texte = pygame.sprite.Sprite()
+pygame.sprite.Sprite.__init__(texte)
+texte.image = police.render(f"Score:{score}", True, (0, 0, 0))  # Texte noir
+rect_texte = texte.image.get_rect(center=(LARGEUR / 2, HAUTEUR / 2))
+texte.rect = texte.image.get_rect()
+texte.rect.centerx = fenetre.get_rect().centerx
+texte.rect.centery = 50
+
 # la classe du joueur, son constructeur et ses mouvements
 class Joueur(pygame.sprite.Sprite):
     def __init__(self):
@@ -25,6 +41,8 @@ class Joueur(pygame.sprite.Sprite):
        self.est_dans_lair = False
        self.hauteur_saut = 10
        self.vitesse_de_saut = 0
+       self.distance_parcourue = 0
+
 
     # fonction pour voir si le joueur saut
     def actualiser(self):
@@ -48,6 +66,7 @@ class Joueur(pygame.sprite.Sprite):
 
         if self.rect.x < 570 and not collision:
             self.rect.x += self.vitesse
+            self.distance_parcourue += self.vitesse
 
     def bouger_gauche(self):
         rectangle = self.rect.copy()
@@ -60,6 +79,7 @@ class Joueur(pygame.sprite.Sprite):
                 break
         if self.rect.x > -10 and not collision:
             self.rect.x -= self.vitesse
+            self.distance_parcourue -= self.vitesse
 
 # Classe de base pour toutes les plateformes
 class Plateforme(pygame.sprite.Sprite):
@@ -143,8 +163,7 @@ class Background(pygame.sprite.Sprite):
         (self.rect.x, self.rect.y) = location
 
 
-fenetre = pygame.display.set_mode((LARGEUR, HAUTEUR))
-clock = pygame.time.Clock()
+
 
 # liste des sprites et l'ajoute de toutes les plateformes
 liste_des_sprites = pygame.sprite.LayeredUpdates()
@@ -155,15 +174,18 @@ for i in range(7):
 # initialisation du joueur
 joueur = Joueur()
 liste_des_sprites.add(joueur)
+liste_des_sprites.add(texte)
+
 
 
 running = True
 
-droite_appuyé = False
-gauche_appuyé = False
+droite_appuye = False
+gauche_appuye = False
 
 GrilleDeJeu = Grille()
 GrilleDeJeu.creer(grille1)
+
 
 while running:
     # mouvement à gauche et droite et le saut
@@ -172,23 +194,23 @@ while running:
            running = False
         if event.type == KEYUP:
             if event.key == K_a:
-                gauche_appuyé = False
+                gauche_appuye = False
             if event.key == K_d:
-                droite_appuyé = False
+                droite_appuye = False
         if event.type == KEYDOWN:
             if event.key == K_a:
-                gauche_appuyé = True
+                gauche_appuye = True
             if event.key == K_d:
-                droite_appuyé = True
+                droite_appuye = True
             if event.key == K_SPACE and not joueur.saut and not joueur.est_dans_lair:
                 joueur.saut = True
                 joueur.est_dans_lair = True
                 joueur.vitesse_de_saut = joueur.hauteur_saut * 2
 
-   if gauche_appuyé:
+   if gauche_appuye:
         joueur.bouger_gauche()
-   if droite_appuyé:
-       joueur.bouger_droite()
+   if droite_appuye:
+        joueur.bouger_droite()
 
 
    joueur.actualiser()
@@ -206,6 +228,13 @@ while running:
                joueur.saut = False
                joueur.est_dans_lair = False
                joueur.vitesse_de_saut = 0
+
+
+   if joueur.distance_parcourue >= checkpoint:
+      score += 1
+      texte.image = police.render(f"Score:{score}", True, (0, 0, 0))
+      joueur.distance_parcourue -= checkpoint
+
 
 
    fenetre.fill((255, 255, 255))
