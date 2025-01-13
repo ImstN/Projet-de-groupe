@@ -136,11 +136,14 @@ class Grille():
 def afficher_ecran_game_over(fenetre):
     fenetre.fill((0, 0, 255))  # Fond bleu
     police = pygame.font.SysFont("Arial", 50)
-    texte = police.render("GAME OVER", True, (255, 255, 255))  # Texte blanc
-    rect_texte = texte.get_rect(center=(LARGEUR / 2, HAUTEUR / 2))
+    texte = police.render("GAME OVER", True, (255, 255, 255))  # couleur du texte: blanc
+    texte2 = police.render(f"SCORE: {score}", True, (255, 255, 255))  # couleur du texte: blanc
+    rect_texte = texte.get_rect(center=(LARGEUR / 2, HAUTEUR / 2 - 50))
+    rect_texte2 = texte.get_rect(center=(LARGEUR / 2, HAUTEUR / 2 + 50))
     fenetre.blit(texte, rect_texte)
+    fenetre.blit(texte2, rect_texte2)
     pygame.display.flip()
-    pygame.time.wait(2000)  # Attendre 2 secondes
+    pygame.time.wait(3000)  # Attendre 2 secondes
 
 # le grille
 grille1 = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0],
