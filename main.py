@@ -56,30 +56,31 @@ class Joueur(pygame.sprite.Sprite):
 
     def bouger_droite(self):
         rectangle = self.rect.copy()
-        rectangle.x += self.vitesse
-        rectangle.y -= 10
+        rectangle.y -= 3
+        rectangle.x += 3
         collision = False
-        for element in liste_des_elements:
+        for element in GrilleDeJeu.get_blocks():
             if rectangle.colliderect(element):
                 collision = True
                 break
 
         if self.rect.x < 570 and not collision:
-            self.rect.x += self.vitesse
             self.distance_parcourue += self.vitesse
+            GrilleDeJeu.bouger(-5)
 
     def bouger_gauche(self):
         rectangle = self.rect.copy()
-        rectangle.x -= self.vitesse
-        rectangle.y -= 10
+        rectangle.y -= 3
+        rectangle.x -= 3
         collision = False
-        for element in liste_des_elements:
+        for element in GrilleDeJeu.get_blocks():
             if rectangle.colliderect(element):
                 collision = True
                 break
         if self.rect.x > -10 and not collision:
-            self.rect.x -= self.vitesse
             self.distance_parcourue -= self.vitesse
+            GrilleDeJeu.bouger(5)
+
 
 # Classe de base pour toutes les plateformes
 class Plateforme(pygame.sprite.Sprite):
@@ -124,6 +125,8 @@ class Grille():
     def bouger(self, offset):
         for block in self.blocks:
             block.rect.x += offset
+    def get_blocks(self):
+        return self.blocks
     def creer(self, listeDeGrille):
         pos_y = 10*32
         for ligne in listeDeGrille:
@@ -231,9 +234,10 @@ while running:
                 joueur.vitesse_de_saut = joueur.hauteur_saut * 2
 
    if gauche_appuye:
-       GrilleDeJeu.bouger(3)
+
+       joueur.bouger_gauche()
    if droite_appuye:
-       GrilleDeJeu.bouger(-3)
+       joueur.bouger_droite()
 
 
    joueur.actualiser()
