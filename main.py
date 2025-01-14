@@ -119,17 +119,27 @@ class Interrogation(Plateforme):
 
 # classe du grille et son constructeur
 class Grille():
+    def __init__(self):
+        self.blocks = []
+    def bouger(self, offset):
+        for block in self.blocks:
+            block.rect.x += offset
     def creer(self, listeDeGrille):
         pos_y = 10*32
         for ligne in listeDeGrille:
             pos_x = 0
             for element in ligne:
+                if element == 0:
+                    pos_x += 32
+                    continue
                 if element == 1:
-                    liste_des_sprites.add(Herbe(pos_x, pos_y))
+                    block = Herbe(pos_x, pos_y)
                 if element == 2:
-                    liste_des_sprites.add(Terre(pos_x, pos_y))
+                    block = Terre(pos_x, pos_y)
                 if element == 3:
-                    liste_des_sprites.add(Interrogation(pos_x, pos_y))
+                    block = Interrogation(pos_x,pos_y)
+                liste_des_sprites.add(block)
+                self.blocks.append(block)
                 pos_x += 32
             pos_y += 32
 
@@ -144,6 +154,15 @@ def afficher_ecran_game_over(fenetre):
     fenetre.blit(texte2, rect_texte2)
     pygame.display.flip()
     pygame.time.wait(3000)  # Attendre 2 secondes
+
+def afficher_ecran_titre(fenetre):
+    fenetre.fill((0, 0, 255))  # Fond bleu
+    police = pygame.font.SysFont("Arial", 30)
+    texte = police.render("Cliquez pour commencer", True, (255, 255, 255))  # Texte blanc
+    rect_texte = texte.get_rect(center=(LARGEUR / 2, HAUTEUR / 2))
+    fenetre.blit(texte, rect_texte)
+    pygame.display.flip()
+
 
 # le grille
 grille1 = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0],
@@ -202,6 +221,7 @@ while running:
                 droite_appuye = False
         if event.type == KEYDOWN:
             if event.key == K_a:
+
                 gauche_appuye = True
             if event.key == K_d:
                 droite_appuye = True
@@ -211,9 +231,9 @@ while running:
                 joueur.vitesse_de_saut = joueur.hauteur_saut * 2
 
    if gauche_appuye:
-        joueur.bouger_gauche()
+       GrilleDeJeu.bouger(3)
    if droite_appuye:
-        joueur.bouger_droite()
+       GrilleDeJeu.bouger(-3)
 
 
    joueur.actualiser()
