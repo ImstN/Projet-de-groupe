@@ -1,3 +1,6 @@
+from random import random, randint
+from symbol import return_stmt
+
 import pygame
 from pygame.locals import *
 
@@ -34,7 +37,7 @@ class Joueur(pygame.sprite.Sprite):
        self.image = pygame.image.load("assets/knight.png").convert_alpha()
        self.image = pygame.transform.scale_by(self.image, 2)
        self.rect = self.image.get_rect()
-       self.rect.x = 25
+       self.rect.x = 175
        self.rect.y = 100 #HAUTEUR/2
        self.vitesse = 5
        self.saut = False
@@ -66,7 +69,7 @@ class Joueur(pygame.sprite.Sprite):
 
         if self.rect.x < 570 and not collision:
             self.distance_parcourue += self.vitesse
-            GrilleDeJeu.bouger(-5)
+            GrilleDeJeu.bouger(int("-1") * self.vitesse)
 
     def bouger_gauche(self):
         rectangle = self.rect.copy()
@@ -79,7 +82,7 @@ class Joueur(pygame.sprite.Sprite):
                 break
         if self.rect.x > -10 and not collision:
             self.distance_parcourue -= self.vitesse
-            GrilleDeJeu.bouger(5)
+            GrilleDeJeu.bouger(self.vitesse)
 
 
 # Classe de base pour toutes les plateformes
@@ -145,6 +148,24 @@ class Grille():
                 self.blocks.append(block)
                 pos_x += 32
             pos_y += 32
+    def creer2(self, listeDeGrille):
+        pos_x = 0
+        for ligne in listeDeGrille:
+            pos_y = 10*32
+            for element in ligne:
+                if element == 0:
+                    pos_y += 32
+                    continue
+                if element == 1:
+                    block = Herbe(pos_x, pos_y)
+                if element == 2:
+                    block = Terre(pos_x, pos_y)
+                if element == 3:
+                    block = Interrogation(pos_x,pos_y)
+                liste_des_sprites.add(block)
+                self.blocks.append(block)
+                pos_y += 32
+            pos_x += 32
 
 def afficher_ecran_game_over(fenetre):
     fenetre.fill((0, 0, 255))  # Fond bleu
@@ -156,7 +177,7 @@ def afficher_ecran_game_over(fenetre):
     fenetre.blit(texte, rect_texte)
     fenetre.blit(texte2, rect_texte2)
     pygame.display.flip()
-    pygame.time.wait(3000)  # Attendre 2 secondes
+    pygame.time.wait(3000)  # Attendre 3 secondes
 
 def afficher_ecran_titre(fenetre):
     fenetre.fill((0, 0, 255))  # Fond bleu
@@ -167,15 +188,46 @@ def afficher_ecran_titre(fenetre):
     pygame.display.flip()
 
 
-# le grille
-grille1 = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0],
-           [0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0],
-           [0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0],
-           [1,1,1,1,0,0,1,1,0,1,1,1,0,0,0,0,0,0],
-           [2,2,2,2,0,0,0,2,0,2,2,2,1,0,0,0,0,0],
-           [2,2,2,0,0,0,0,0,0,2,2,2,2,2,2,2,0,1],
-           [0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,0,2],
-           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
+lrg = 100
+haut = 5
+listeDeGrille = [[]] * lrg
+for largeur in range(lrg):
+    listee = [0] * haut
+    for hauteur in range(haut):
+        if hauteur == 0:
+            listee[hauteur] = 1
+        if (listee[hauteur] == 1 and hauteur != haut-1) or (listee[hauteur] == 2 and hauteur != haut-1):
+            random_nombre = randint(0, 6)
+            if random_nombre != 0:
+                listee[hauteur+1] = 2
+            else:
+                break
+    listeDeGrille[largeur] = listee
+
+for liste in listeDeGrille:
+    liste.append(0)
+    liste.append(0)
+    liste.append(0)
+    liste.append(0)
+
+for largeur in range(lrg):
+    trou = 0
+    rn = randint(0,1)
+    if rn == 0 and trou < 4:
+        listeDeGrille[largeur] = []
+        trou += 1
+    else:
+        rn2 = randint(0,5)
+        for i in range(rn2-1):
+            listeDeGrille[largeur].insert(0, 0)
+            listeDeGrille[largeur].pop()
+
+print(listeDeGrille)
+
+
+if listeDeGrille[5]:
+    listeDeGrille[5][0] = 1
+
 
 # classe de l'arrière plan
 class Background(pygame.sprite.Sprite):
@@ -209,7 +261,8 @@ droite_appuye = False
 gauche_appuye = False
 
 GrilleDeJeu = Grille()
-GrilleDeJeu.creer(grille1)
+#GrilleDeJeu.creer(grille1)
+GrilleDeJeu.creer2(listeDeGrille)
 
 
 while running:
