@@ -9,8 +9,6 @@ HAUTEUR = 600
 
 pygame.init()
 
-liste_des_elements = []
-
 pesanteur_haut: int = 2
 pesanteur_bas: int = 8
 
@@ -95,7 +93,6 @@ class Plateforme(pygame.sprite.Sprite):
         self.rect.x = LARGEUR/2
         self.rect.y = HAUTEUR/2
         self.taille = self.image.get_height()
-        liste_des_elements.append(self)
 
 # la platforme de l'herbe
 class Herbe(Plateforme):
@@ -131,7 +128,7 @@ class Grille():
     def get_blocks(self):
         return self.blocks
     def creer(self):
-        lrg = 100
+        lrg = 1000
         haut = 5
         listeDeGrille = [[] for _ in range(lrg)]
         for largeur in range(lrg):
@@ -244,6 +241,7 @@ gauche_appuye = False
 GrilleDeJeu = Grille()
 GrilleDeJeu.creer()
 
+ecran_titre = True
 
 while running:
     # mouvement à gauche et droite et le saut
@@ -257,7 +255,6 @@ while running:
                 droite_appuye = False
         if event.type == KEYDOWN:
             if event.key == K_a:
-
                 gauche_appuye = True
             if event.key == K_d:
                 droite_appuye = True
@@ -265,13 +262,15 @@ while running:
                 joueur.saut = True
                 joueur.est_dans_lair = True
                 joueur.vitesse_de_saut = joueur.hauteur_saut * 2
+        if event.type == MOUSEBUTTONDOWN and ecran_titre:
+            if event.button == 1:
+                ecran_titre = False
+
 
    if gauche_appuye:
-
        joueur.bouger_gauche()
    if droite_appuye:
        joueur.bouger_droite()
-
 
    joueur.actualiser()
 
@@ -280,8 +279,9 @@ while running:
        afficher_ecran_game_over(fenetre)
        running = False
 
+
    # gestion des collisions
-   for bloc in liste_des_elements:
+   for bloc in GrilleDeJeu.get_blocks():
        if joueur.rect.colliderect(bloc.rect):
            if joueur.vitesse_de_saut <= 0 and joueur.rect.bottom <= bloc.rect.top + 10:
                joueur.rect.bottom = bloc.rect.top
@@ -289,16 +289,16 @@ while running:
                joueur.est_dans_lair = False
                joueur.vitesse_de_saut = 0
 
-
    if joueur.distance_parcourue >= checkpoint:
       score += 1
       texte.image = police.render(f"Score:{score}", True, (0, 0, 0))
       joueur.distance_parcourue -= checkpoint
 
-
-
-   fenetre.fill((255, 255, 255))
-   liste_des_sprites.draw(fenetre)
+   if ecran_titre:
+       afficher_ecran_titre(fenetre)
+   else:
+       fenetre.fill((255, 255, 255))
+       liste_des_sprites.draw(fenetre)
    pygame.display.flip()
    clock.tick(60)  # Limite la boucle à 60 images par seconde
 
