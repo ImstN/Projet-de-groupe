@@ -29,7 +29,7 @@ texte.rect = texte.image.get_rect()
 texte.rect.centerx = fenetre.get_rect().centerx
 texte.rect.centery = 50
 
-# texte pour le tuto
+# textes pour le tuto
 texte_tuto1 = pygame.sprite.Sprite()
 texte_tuto2 = pygame.sprite.Sprite()
 police2 = pygame.font.Font('assets/fonts/PixelOperator8.ttf', 18)
@@ -233,7 +233,7 @@ class Background(pygame.sprite.Sprite):
         image = "assets/ap.png"
         super().__init__()
         self.image = pygame.image.load(image).convert_alpha()
-        self.image = pygame.transform.scale_by(self.image, 0.043)
+        self.image = pygame.transform.scale_by(self.image, 0.045)
         self.rect = self.image.get_rect()
         (self.rect.x, self.rect.y) = location
 
@@ -248,15 +248,16 @@ for i in range(7):
 
 # initialisation du joueur
 joueur = Joueur()
+
 liste_des_sprites.add(joueur)
 liste_des_sprites.add(texte)
-
 
 running = True
 
 droite_appuye = False
 gauche_appuye = False
 
+# création du grille
 GrilleDeJeu = Grille()
 GrilleDeJeu.creer()
 
@@ -315,6 +316,7 @@ while running:
                    joueur.est_dans_lair = False
                    joueur.vitesse_de_saut = 0
 
+   #  affichache du score
    if joueur.distance_parcourue >= checkpoint:
       score += 1
       texte.image = police.render(f"Score:{score}", True, (0, 0, 0))
