@@ -130,7 +130,25 @@ class Grille():
             block.rect.x += offset
     def get_blocks(self):
         return self.blocks
-    def creer(self):
+    def creer(self, listeDeGrille):
+        pos_y = 10*32
+        for ligne in listeDeGrille:
+            pos_x = 0
+            for element in ligne:
+                if element == 0:
+                    pos_x += 32
+                    continue
+                if element == 1:
+                    block = Herbe(pos_x, pos_y)
+                if element == 2:
+                    block = Terre(pos_x, pos_y)
+                if element == 3:
+                    block = Interrogation(pos_x,pos_y)
+                liste_des_sprites.add(block)
+                self.blocks.append(block)
+                pos_x += 32
+            pos_y += 32
+    def creer2(self):
         lrg = 100
         haut = 5
         listeDeGrille = [[] for _ in range(lrg)]
@@ -140,37 +158,35 @@ class Grille():
                 if hauteur == 0:
                     listee[hauteur] = 1
                 if (listee[hauteur] == 1 and hauteur != haut - 1) or (listee[hauteur] == 2 and hauteur != haut - 1):
-                    random_nombre = randint(0, 5)
+                    random_nombre = randint(0, 6)
                     if random_nombre != 0:
                         listee[hauteur + 1] = 2
                     else:
                         break
             listeDeGrille[largeur] = listee
 
-        #agrandir la liste horizontale
         for liste in listeDeGrille:
-            for i in range (4):
-                liste.append(0)
+            liste.append(0)
+            liste.append(0)
+            liste.append(0)
+            liste.append(0)
 
-        # création des trous et du déplacement horizontal d'éléments
-        trou = 0
         for largeur in range(lrg):
             rn = randint(0, 1)
-            if rn == 0 and trou < 3:
+            if rn == 0:
                 listeDeGrille[largeur] = []
-                trou += 1
             else:
-                trou = 0
                 rn2 = randint(0, 4)
                 for i in range(rn2 - 1):
                     listeDeGrille[largeur].insert(0, 0)
                     listeDeGrille[largeur].pop()
 
-        # créer une plattforme sur laquelle le joueur apparait
-        if not listeDeGrille[5]:
-            listeDeGrille[5] = [1]
 
-        # traduction de la liste en un grille
+        if listeDeGrille[5]:
+            listeDeGrille[5][0] = 1
+
+        print(listeDeGrille)
+
         pos_x = 0
         for ligne in listeDeGrille:
             pos_y = 10*32
@@ -236,13 +252,15 @@ liste_des_sprites.add(joueur)
 liste_des_sprites.add(texte)
 
 
+
 running = True
 
 droite_appuye = False
 gauche_appuye = False
 
 GrilleDeJeu = Grille()
-GrilleDeJeu.creer()
+#GrilleDeJeu.creer(grille1)
+GrilleDeJeu.creer2()
 
 
 while running:
