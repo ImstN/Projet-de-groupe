@@ -19,7 +19,8 @@ clock = pygame.time.Clock()
 score = 0
 checkpoint = 50
 
-police = pygame.font.SysFont("Arial", 50)
+# texte pour le score
+police = pygame.font.Font('assets/fonts/PixelOperator8.ttf', 50)
 texte = pygame.sprite.Sprite()
 pygame.sprite.Sprite.__init__(texte)
 texte.image = police.render(f"Score:{score}", True, (0, 0, 0))  # Texte noir
@@ -27,6 +28,22 @@ rect_texte = texte.image.get_rect(center=(LARGEUR / 2, HAUTEUR / 2))
 texte.rect = texte.image.get_rect()
 texte.rect.centerx = fenetre.get_rect().centerx
 texte.rect.centery = 50
+
+# texte pour le tuto
+texte_tuto1 = pygame.sprite.Sprite()
+texte_tuto2 = pygame.sprite.Sprite()
+police2 = pygame.font.Font('assets/fonts/PixelOperator8.ttf', 18)
+pygame.sprite.Sprite.__init__(texte_tuto1)
+pygame.sprite.Sprite.__init__(texte_tuto2)
+texte_tuto1.image = police2.render("Utilisez W A S D et la barre d'espace", True, (255, 255, 255))
+texte_tuto2.image = police2.render("pour vous déplacer", True, (255, 255, 255))
+texte_tuto1.rect = texte_tuto1.image.get_rect()
+texte_tuto2.rect = texte_tuto2.image.get_rect()
+texte_tuto1.rect.centerx = fenetre.get_rect().centerx
+texte_tuto2.rect.centerx = fenetre.get_rect().centerx
+texte_tuto1.rect.bottom = fenetre.get_rect().height - 35
+texte_tuto2.rect.bottom = fenetre.get_rect().height - 15
+
 
 # la classe du joueur, son constructeur et ses mouvements
 class Joueur(pygame.sprite.Sprite):
@@ -127,6 +144,8 @@ class Grille():
             block.rect.x += offset
     def get_blocks(self):
         return self.blocks
+    def add_to_blocks(self, object):
+        self.blocks.append(object)
     def creer(self):
         lrg = 1000
         haut = 5
@@ -188,7 +207,7 @@ class Grille():
 
 def afficher_ecran_game_over(fenetre):
     fenetre.fill((0, 0, 255))  # Fond bleu
-    police = pygame.font.SysFont("Arial", 50)
+    police = pygame.font.Font('assets/fonts/PixelOperator8.ttf', 50)
     texte = police.render("GAME OVER", True, (255, 255, 255))  # couleur du texte: blanc
     texte2 = police.render(f"SCORE: {score}", True, (255, 255, 255))  # couleur du texte: blanc
     rect_texte = texte.get_rect(center=(LARGEUR / 2, HAUTEUR / 2 - 50))
@@ -200,7 +219,7 @@ def afficher_ecran_game_over(fenetre):
 
 def afficher_ecran_titre(fenetre):
     fenetre.fill((0, 0, 255))  # Fond bleu
-    police = pygame.font.SysFont("Arial", 30)
+    police = pygame.font.Font('assets/fonts/PixelOperator8.ttf', 30)
     texte = police.render("Cliquez pour commencer", True, (255, 255, 255))  # Texte blanc
     rect_texte = texte.get_rect(center=(LARGEUR / 2, HAUTEUR / 2))
     fenetre.blit(texte, rect_texte)
@@ -240,6 +259,12 @@ gauche_appuye = False
 
 GrilleDeJeu = Grille()
 GrilleDeJeu.creer()
+
+liste_des_sprites.add(texte_tuto1)
+liste_des_sprites.add(texte_tuto2)
+
+GrilleDeJeu.add_to_blocks(texte_tuto1)
+GrilleDeJeu.add_to_blocks(texte_tuto2)
 
 ecran_titre = True
 
@@ -282,12 +307,13 @@ while running:
 
    # gestion des collisions
    for bloc in GrilleDeJeu.get_blocks():
-       if joueur.rect.colliderect(bloc.rect):
-           if joueur.vitesse_de_saut <= 0 and joueur.rect.bottom <= bloc.rect.top + 10:
-               joueur.rect.bottom = bloc.rect.top
-               joueur.saut = False
-               joueur.est_dans_lair = False
-               joueur.vitesse_de_saut = 0
+       if bloc != texte_tuto1 and bloc != texte_tuto2:
+           if joueur.rect.colliderect(bloc.rect):
+               if joueur.vitesse_de_saut <= 0 and joueur.rect.bottom <= bloc.rect.top + 10:
+                   joueur.rect.bottom = bloc.rect.top
+                   joueur.saut = False
+                   joueur.est_dans_lair = False
+                   joueur.vitesse_de_saut = 0
 
    if joueur.distance_parcourue >= checkpoint:
       score += 1
