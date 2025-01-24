@@ -322,6 +322,7 @@ while running or ecran_gameover or ecran_titre:
             if event.button == 1:
                 ecran_gameover = False
                 ecran_titre = True
+                bouger = True
                 score = 0 #réinitialiser le score
                 joueur.reinitialiser()
                 GrilleDeJeu.reinitialiser()
