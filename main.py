@@ -1,8 +1,7 @@
-from random import random, randint
-from symbol import return_stmt
-
 import pygame
 from pygame.locals import *
+from random import randint
+
 
 LARGEUR = 600
 HAUTEUR = 600
@@ -35,7 +34,7 @@ texte_tuto2 = pygame.sprite.Sprite()
 police2 = pygame.font.Font('assets/fonts/PixelOperator8.ttf', 18)
 pygame.sprite.Sprite.__init__(texte_tuto1)
 pygame.sprite.Sprite.__init__(texte_tuto2)
-texte_tuto1.image = police2.render("Utilisez W A S D et la barre d'espace", True, (255, 255, 255))
+texte_tuto1.image = police2.render("Utilisez A, D et la barre d'espace", True, (255, 255, 255))
 texte_tuto2.image = police2.render("pour vous déplacer", True, (255, 255, 255))
 texte_tuto1.rect = texte_tuto1.image.get_rect()
 texte_tuto2.rect = texte_tuto2.image.get_rect()
@@ -62,7 +61,7 @@ class Joueur(pygame.sprite.Sprite):
        self.distance_parcourue = 0
 
 
-    # fonction pour voir si le joueur saut
+    # fonction pour voir si le joueur saute
     def actualiser(self):
         if self.saut:
             self.rect.y -= self.vitesse_de_saut
@@ -98,6 +97,15 @@ class Joueur(pygame.sprite.Sprite):
         if self.rect.x > -10 and not collision:
             self.distance_parcourue -= self.vitesse
             GrilleDeJeu.bouger(self.vitesse)
+
+    # fonction pour remettre le joueur à son point de départ
+    def reinitialiser(self):
+        self.rect.x = 175
+        self.rect.y = 100  # Revenir à la position de départ
+        self.saut = False
+        self.est_dans_lair = False
+        self.vitesse_de_saut = 0
+        self.distance_parcourue = 0
 
 
 # Classe de base pour toutes les plateformes
@@ -135,7 +143,7 @@ class Interrogation(Plateforme):
         self.rect.x = x
         self.rect.y = y
 
-# classe du grille et son constructeur
+# classe de la grille et son constructeur
 class Grille():
     def __init__(self):
         self.blocks = []
@@ -146,6 +154,18 @@ class Grille():
         return self.blocks
     def add_to_blocks(self, object):
         self.blocks.append(object)
+
+    # fonction pour redémarrer la grille
+    def reinitialiser(self):
+        self.blocks.clear()  # Vider les blocs existants
+        liste_des_sprites.empty()  # Réinitialiser tous les sprites
+        for i in range(7):  # Recréer l'arrière-plan
+            background = Background([86 * i, 0])
+            liste_des_sprites.add(background)
+        liste_des_sprites.add(joueur)  # Réajouter le joueur
+        liste_des_sprites.add(texte)  # Réajouter le score
+        self.creer()  # Régénérer les plateformes
+
     def creer(self):
         lrg = 1000
         haut = 5
@@ -186,7 +206,7 @@ class Grille():
         if not listeDeGrille[5]:
             listeDeGrille[5] = [1]
 
-        # traduction de la liste en un grille
+        # traduction de la liste en une grille
         pos_x = 0
         for ligne in listeDeGrille:
             pos_y = 10*32
@@ -208,14 +228,18 @@ class Grille():
 def afficher_ecran_game_over(fenetre):
     fenetre.fill((0, 0, 255))  # Fond bleu
     police = pygame.font.Font('assets/fonts/PixelOperator8.ttf', 50)
+    police2 = pygame.font.Font('assets/fonts/PixelOperator8.ttf', 20)
     texte = police.render("GAME OVER", True, (255, 255, 255))  # couleur du texte: blanc
     texte2 = police.render(f"SCORE: {score}", True, (255, 255, 255))  # couleur du texte: blanc
+    texte3 = police2.render("cliquez pour rejouer", True, (255, 255, 255))
     rect_texte = texte.get_rect(center=(LARGEUR / 2, HAUTEUR / 2 - 50))
     rect_texte2 = texte.get_rect(center=(LARGEUR / 2, HAUTEUR / 2 + 50))
+    rect_texte3 = texte.get_rect(center=(LARGEUR / 2, HAUTEUR / 2 + 150))
     fenetre.blit(texte, rect_texte)
     fenetre.blit(texte2, rect_texte2)
+    fenetre.blit(texte3, rect_texte3)
     pygame.display.flip()
-    pygame.time.wait(3000)  # Attendre 3 secondes
+    #pygame.time.wait(3000)  # Attendre 3 secondes
 
 def afficher_ecran_titre(fenetre):
     fenetre.fill((0, 0, 255))  # Fond bleu
@@ -252,12 +276,14 @@ joueur = Joueur()
 liste_des_sprites.add(joueur)
 liste_des_sprites.add(texte)
 
-running = True
+running = False
+ecran_titre = True
+ecran_gameover = False
 
 droite_appuye = False
 gauche_appuye = False
 
-# création du grille
+# création de la grille
 GrilleDeJeu = Grille()
 GrilleDeJeu.creer()
 
@@ -267,9 +293,7 @@ liste_des_sprites.add(texte_tuto2)
 GrilleDeJeu.add_to_blocks(texte_tuto1)
 GrilleDeJeu.add_to_blocks(texte_tuto2)
 
-ecran_titre = True
-
-while running:
+while running or ecran_gameover or ecran_titre:
     # mouvement à gauche et droite et le saut
    for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -291,6 +315,14 @@ while running:
         if event.type == MOUSEBUTTONDOWN and ecran_titre:
             if event.button == 1:
                 ecran_titre = False
+                running = True
+        if event.type == MOUSEBUTTONDOWN and ecran_gameover:
+            if event.button == 1:
+                ecran_gameover = False
+                ecran_titre = True
+                score = 0 #réinitialiser le score
+                joueur.reinitialiser()
+                GrilleDeJeu.reinitialiser()
 
 
    if gauche_appuye:
@@ -302,8 +334,9 @@ while running:
 
    # affichache de l'écran "game-over"
    if joueur.rect.y > HAUTEUR:
-       afficher_ecran_game_over(fenetre)
+       ecran_gameover = True
        running = False
+
 
 
    # gestion des collisions
@@ -316,18 +349,21 @@ while running:
                    joueur.est_dans_lair = False
                    joueur.vitesse_de_saut = 0
 
-   #  affichache du score
+   #  calcul du score
    if joueur.distance_parcourue >= checkpoint:
       score += 1
       texte.image = police.render(f"Score:{score}", True, (0, 0, 0))
-      joueur.distance_parcourue -= checkpoint
+      joueur.distance_parcourue -= checkpoint #pour que le checkpoit "se déplace" vers la droite
 
    if ecran_titre:
        afficher_ecran_titre(fenetre)
-   else:
+   elif ecran_gameover:
+       afficher_ecran_game_over(fenetre)
+   elif running:
        fenetre.fill((255, 255, 255))
        liste_des_sprites.draw(fenetre)
+
    pygame.display.flip()
-   clock.tick(60)  # Limite la boucle à 60 images par seconde
+   clock.tick(60)  # Limite la boucle à 60 images par secondes
 
 pygame.quit()
