@@ -283,6 +283,8 @@ ecran_gameover = False
 droite_appuye = False
 gauche_appuye = False
 
+bouger = True
+
 # création de la grille
 GrilleDeJeu = Grille()
 GrilleDeJeu.creer()
@@ -325,15 +327,16 @@ while running or ecran_gameover or ecran_titre:
                 GrilleDeJeu.reinitialiser()
 
 
-   if gauche_appuye:
+   if gauche_appuye and bouger:
        joueur.bouger_gauche()
-   if droite_appuye:
+   if droite_appuye and bouger:
        joueur.bouger_droite()
 
    joueur.actualiser()
 
    # affichache de l'écran "game-over"
    if joueur.rect.y > HAUTEUR:
+       bouger = False
        ecran_gameover = True
        running = False
 
@@ -362,7 +365,6 @@ while running or ecran_gameover or ecran_titre:
    elif running:
        fenetre.fill((255, 255, 255))
        liste_des_sprites.draw(fenetre)
-
    pygame.display.flip()
    clock.tick(60)  # Limite la boucle à 60 images par secondes
 
