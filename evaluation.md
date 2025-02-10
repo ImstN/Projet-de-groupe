@@ -13,7 +13,7 @@ Malgré les contraintes techniques, vous avez réussi à créer un mini-jeu rée
 | **Critères côté développeur**       |            |                |              |
 | Le code comporte des commentaires pertinents pour expliquer vos lignes de code. | 1 pt  |  0.75pt | Il manque quelques commentaires dans la boucle de jeu afin que tout soit clairement expliqué  |
 | Le programme comporte au moins 4 classes, chacune ayant des attributs et des méthodes. | 4 pts  |  4pts |   |
-| Le programme comporte au moins une classe utilisant l'héritage de manière pertinente. | 2 pts  | 1pt  | L'héritage n'est pas ici utilisé de la manière la plus pertinente possible. En effet, la seule chose qui différencie une plateforme "Herbe" d'une plateforme "Terre" est l'image utilisée. Ainsi, il aurait été plus simple de juste passer l'image comme paramètre d'une classe plateforme plutôt que de créer une nouvelle classe.  |
+| Le programme comporte au moins une classe utilisant l'héritage de manière pertinente. | 2 pts  | 1pt  | L'héritage n'est pas ici utilisé de la manière la plus pertinente possible. En effet, la seule chose qui différencie une plateforme "Herbe" d'une plateforme "Terre" est l'image utilisée. Ainsi, il aurait été plus simple de juste passer l'image comme paramètre d'une classe plateforme plutôt que de créer une nouvelle classe. Ces classes héritent toutefois de Sprite, qui est une utilisation pertinente. |
 | **Git et GitHub**                   |            |                |              |
 | Le projet a été réalisé en collaboration sur GitHub| 1 pts  | 1pt  |   |
 | Différentes branches ont été créées et fusionnées au long du projet| 1 pts  | 1pt  | 16 branches ont été fusionnées !  |
